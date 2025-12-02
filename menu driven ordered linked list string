@@ -1,0 +1,149 @@
+/*
+  Program to create an ORDERED Linked List with strings
+  Pranav
+  2-12-2025
+  orderedstringlist.c
+*/
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<memory.h>
+
+typedef struct ListType {
+  char Data[50];
+  struct ListType *Next;
+} LISTNODE;
+
+LISTNODE *Head;
+
+//prototypes
+void InitList();
+void InsertNode(char str[]);
+void DisplayList(LISTNODE *head);
+void SearchNode(char str[]);
+void DeleteNode(char str[]);
+
+int main (){
+  int choice;
+  char str[50];
+
+  InitList();
+
+  printf("Program to create an ORDERED Linked List with strings\n");
+
+  while(1){
+    printf("\nMenu:\n");
+    printf("1. Insert a string\n");
+    printf("2. Display the list of strings\n");
+    printf("3. Search for a given string\n");
+    printf("4. Delete a given string\n");
+    printf("5. Exit\n");
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+
+    switch(choice){
+      case 1:
+        printf("Enter the string to insert: ");
+        scanf("%s", str);
+        InsertNode(str);
+        break;
+      case 2:
+        DisplayList(Head);
+        break;
+      case 3:
+        printf("Enter the string to search: ");
+        scanf("%s", str);
+        SearchNode(str);
+        break;
+      case 4:
+        printf("Enter the string to delete: ");
+        scanf("%s", str);
+        DeleteNode(str);
+        break;
+      case 5:
+        exit(0);
+      default:
+        printf("Invalid choice. Try again.\n");
+    }
+  }
+  return 0;
+}
+
+void InitList(){
+  Head = NULL;
+}
+
+void InsertNode(char str[]){
+  LISTNODE *Node, *Current, *Prev;
+  Node = (LISTNODE *)malloc(sizeof(LISTNODE));
+  strcpy(Node->Data, str);
+  Node->Next = NULL;
+
+  if(Head == NULL || strcmp(str, Head->Data) < 0){
+    Node->Next = Head;
+    Head = Node;
+    return;
+  }
+
+  Prev = NULL;
+  Current = Head;
+  while(Current != NULL && strcmp(Current->Data, str) < 0){
+    Prev = Current;
+    Current = Current->Next;
+  }
+  Prev->Next = Node;
+  Node->Next = Current;
+}
+
+void DisplayList(LISTNODE *head){
+  LISTNODE *Current;
+  if(head == NULL){
+    printf("List is empty\n");
+    return;
+  }
+  Current = head;
+  while(Current != NULL){
+    printf("%s -> ", Current->Data);
+    Current = Current->Next;
+  }
+  printf("NULL\n");
+}
+
+void SearchNode(char str[]){
+  LISTNODE *Current = Head;
+  while(Current != NULL){
+    if(strcmp(Current->Data, str) == 0){
+      printf("String \"%s\" found in the list\n", str);
+      return;
+    }
+    Current = Current->Next;
+  }
+  printf("String \"%s\" not found in the list\n", str);
+}
+
+void DeleteNode(char str[]){
+  LISTNODE *Current = Head, *Prev = NULL;
+
+  if(Current == NULL){
+    printf("List is empty\n");
+    return;
+  }
+
+  while(Current != NULL && strcmp(Current->Data, str) != 0){
+    Prev = Current;
+    Current = Current->Next;
+  }
+
+  if(Current == NULL){
+    printf("String \"%s\" not found in the list\n", str);
+    return;
+  }
+
+  if(Prev == NULL){
+    Head = Current->Next;
+  } else {
+    Prev->Next = Current->Next;
+  }
+  free(Current);
+  printf("String \"%s\" deleted from the list\n", str);
+}
